@@ -45,7 +45,7 @@ void *thread_fun(void *pro)
   
   while(pid_check(p->pid)==0)
   {
-    sleep(2);
+    sleep(5);
     printf("\n%d: Fetching pid...\n",p->sno);
     p->pid = allocate_pid();
   }
