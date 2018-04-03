@@ -30,14 +30,14 @@ int allocate_pid()
       return i+100;        //returning pid
     }
   }
-  return 0;
+  return 0;                //if pids are not free, 0 is returned indicating the same.
 }
 
 int release_pid(int p)
 {
   int pid=p-100;            //taking pid from parameter
   pid_status[pid]=0;        //changing pid status
-  return 0;                 //return status 1 to indicate success
+  return 1;                 //return status 1 to indicate success
 }
 
 void display()
