@@ -19,7 +19,7 @@ int pid_check(int pid)
     return 1;
     //printf("\nPid is: %d",pid);
   }
-  else if(pid==0)
+  else if(pid==1)
   {
     printf("\npid allocation failed...\n");
     return 0;
