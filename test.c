@@ -13,84 +13,78 @@ struct proc
 
 int pid_check(int pid)
 {
-  if(pid>=100)
+  if(pid>=100)                        //checking whether pid is assigned or not.
   {
     printf("\nPid %d assigned successfully...\n",pid);
-    return 1;
+    return 0;                               //returning 0 to indicate pid is set.
     //printf("\nPid is: %d",pid);
   }
-  else if(pid==1)
+  else if(pid==1)                     //if returned is 1, pid is not set (indicating pids are not free).
   {
-    printf("\npid allocation failed...\n");
-    return 0;
+    printf("\npid allocation failed...\n"); 
+    return 1;                         //returning 1 to say the same.
   }
-  else
+  else                              //if something else happened.
   {
     printf("\nSomething went wrong... pid: %d is returned...",pid);
-    return 0;
+    return 1;
   }
 }
 
 int set_sleep_time()
 {
   //srand(2);
-  return rand()%10;
+  return rand()%10;                      //giving sleep time in range 0-10 secs.
 }
 
-void *thread_fun(void *pro)
+void *thread_fun(void *pro)               //In each thread, this body of code executes.
 {
   struct proc *p = (struct proc *) pro;
   printf("\n%d: Fetching pid...\n",p->sno);
-  p->pid = alocate_pid();
+  p->pid = alocate_pid();                 //fetching pid
   
-  while(pid_check(p->pid)==0)
+  while(pid_check(p->pid)==1)             //until pid is assigned, this loop will run.
   {
-    sleep(5);
-    printf("\n%d: Fetching pid...\n",p->sno);
-    p->pid = allocate_pid();
+    sleep(5);                             //for every loop or again asking for pid, it sleeps for 5 secs.
+    printf("\n%d: Fetching pid...\n",p->sno);   
+    p->pid = allocate_pid();              //trying to fetch pid once more.
   }
-  display();
+  display();                              //display the pids statuses.
   
-  p->sl_time = set_sleep_time();
+  p->sl_time = set_sleep_time();          //setting of sleep time for every process or thread.
   printf("\n%d: pid = %d,sl_time = %d\n",p->sno,p->pid,p->sl_time);
   printf("\n%d - %d: Entered Sleep time...\n",p->sno,p->pid);
-  sleep(p->sl_time);
+  sleep(p->sl_time);                                                    //every thread sleep for its allocated time.
   printf("\n%d - %d: Exited Sleep time...\n",p->sno,p->pid);
-  int pos = release_pid(p->pid);
+  release_pid(p->pid);                                    //after sleep time completes, every thread releases its pid.
   display();
-  
-  if(pos==0)
-  {
-    printf("\n%d - %d: pid released...\n",p->sno,p->pid);
-  }
-  else
-  {
-    printf("\n%d - %d: problem in releasing pid...\n",p->sno,p->pid);
-  }
 }
 
 int main()
 {
   int i, no_of_threads;
   printf("Enter no of threads: ");
-  scanf("%d",&no_of_threads);
+  scanf("%d",&no_of_threads);               //getting no of threads from user input.
   printf("...program getting stared...\n");
   
-  allocate_map();
-  printf("Map allocated...\n");
+  int x = allocate_map();                   //initializing pid statuses.
+  if(x==0)                                  //checking whether they get initialized or not.
+    printf("Map allocated...\n");
+  else
+    printf("Problem in initializing statuses...\n");
   
-  struct proc pr[no_of_threads];
-  pthread_t pr_threads[no_of_threads];
+  struct proc pr[no_of_threads];                    //creating process structures of the number given by user.
+  pthread_t pr_threads[no_of_threads];              //creating threads references of number given by user.
   
   for(i=0;i<no_of_threads;i++)
   {
-    pr[i].sno = i;
-    pthread_create(&pr_threads[i],NULL,thread_fun,&pr[i]);
+    pr[i].sno = i;                                  //giving every structure its serial number, starting from 0.
+    pthread_create(&pr_threads[i],NULL,thread_fun,&pr[i]);           //creating threads with function associated with every thread.
   }
   
-  for(i=0;i<no_of_threads;i++)
+  for(i=0;i<no_of_threads;i++)              
   {
-    pthread_join(pr_threads[i],NULL);
+    pthread_join(pr_threads[i],NULL);                     //waiting for every thread to get execute.
   }
   
   printf("\n...Program Successfully terminated...\n");
