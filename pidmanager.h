@@ -42,12 +42,18 @@ void release_pid(int p)
 
 void display()
 {
-  int i;
-  
+  int i,c=0;
+  printf("\n----------------------------------------");
   for(i=0;i<ARR_SIZE;i++)
   {
-    printf("[%d] = %d\t",i+100,pid_status[i]);
+    if(pid_status[i]==1)
+    {
+      printf("\n[%d] = %d\t",i+100,pid_status[i]);
+      c++;
+    }
   }
+  printf("\nPids in Use: %d",c);
+  printf("\n----------------------------------------\n\n");
 }
 
 #endif
