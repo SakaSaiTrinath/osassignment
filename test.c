@@ -1,14 +1,26 @@
+/*
+  This file test.c tests pidmanager which is defined in pidmanger.h. 
+  
+  On running this file, it asks for number of threads to create from user. 
+  After getting input, 
+  First allocate_map() called from pidmanager.h which initialises all the pid statuses.  
+  Then threads and structure objects for every thread gets created.
+  Then every thread ask pidmanager for pid on creation by calling allocate_map() function from pidmanager header file. 
+  After getting pid, thread calls set_sleep_time() for getting random period of sleep time.
+  Then, thread sleeps for allocated time.
+  After sleep time completed, thread leaves the pid to pidmanger by calling release_pid() from pidmanager.h.
+*/
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<pthread.h>
-#include<time.h>
 #include "pidmanager.h"
 
-struct proc
+struct proc       //structure for thread which represents process's data
 {
-  int sno;
-  int pid;
-  int sl_time;
+  int sno;        //serial number
+  int pid;        //pid value
+  int sl_time;    //sleep time
 };
 
 int pid_check(int pid)
@@ -17,7 +29,6 @@ int pid_check(int pid)
   {
     printf("\nPid %d assigned successfully...\n",pid);
     return 0;                               //returning 0 to indicate pid is set.
-    //printf("\nPid is: %d",pid);
   }
   else if(pid==1)                     //if returned is 1, pid is not set (indicating pids are not free).
   {
@@ -33,7 +44,6 @@ int pid_check(int pid)
 
 int set_sleep_time()
 {
-  //srand(2);
   return rand()%10;                      //giving sleep time in range 0-10 secs.
 }
 
@@ -45,7 +55,7 @@ void *thread_fun(void *pro)               //In each thread, this body of code ex
   
   while(pid_check(p->pid)==1)             //until pid is assigned, this loop will run.
   {
-    sleep(5);                             //for every loop or again asking for pid, it sleeps for 5 secs.
+    sleep(5);                             //sleeps for 5 secs as pid is not assigned.
     printf("\n%d: Fetching pid...\n",p->sno);   
     p->pid = allocate_pid();              //trying to fetch pid once more.
   }
@@ -73,7 +83,7 @@ int main()
   else
     printf("Problem in initializing statuses...\n");
   
-  struct proc pr[no_of_threads];                    //creating process structures of the number given by user.
+  struct proc pr[no_of_threads];               //creating structures for threads to store data of a thread of the number given by user.
   pthread_t pr_threads[no_of_threads];              //creating threads references of number given by user.
   
   for(i=0;i<no_of_threads;i++)
