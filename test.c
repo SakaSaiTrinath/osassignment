@@ -97,7 +97,7 @@ int main()
     pthread_join(pr_threads[i],NULL);                     //waiting for every thread to get execute.
   }
   
-  printf("\n...Program Successfully terminated...\n");
+  printf("\n...Successfully terminated...\n");
 }
   
   
